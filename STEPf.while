@@ -1,0 +1,116 @@
+(* STEPn.while
+
+  This is the STEP macro for the  universal WHILEL program (self-interpreter)
+ for Question 7 of the Assignment based on the STEPn.while program published on our Study Direct site.
+
+
+   It takes as input a list
+   [ CSt, DSt, St ]         where
+
+     * we may assume that CSt only contains correctly encoded program statements and expressions
+      (so no error handling needed)
+	 
+     * CSt is the command stack (for program traversal)
+     * DSt is the data stack (intermediate results)
+     * St is the program store (memory) for variables
+	
+    Output is a new state   [ CSt’, DSt’, St’ ] 
+    according to th interpretation of the topmost element of CSt. 
+
+   (c) 2018 Bernhard Reus 
+
+ This needs to be tested with the self interpreter u.while from StyDir
+ and the macros update.while, lookup.while, isnumber.while and reverse.while also from StyDir
+
+ 
+*)
+
+
+
+STEPf read state {
+                    // retrieve individual arguments from list
+    CSt := hd state;
+    DSt:= hd tl state;
+    St:= hd tl tl state;
+	P:= hd tl tl tl state;
+    C:= hd CSt;   // current command on top of Command stack
+
+    d := <isnumber> C;
+
+   if d 
+     {
+      // do_marker to be executed 
+     arg:= hd DSt;
+     switch C {
+     case @doHd:    DSt:= cons (hd arg) (tl DSt); CSt:= tl CSt
+     case @doTl:    DSt:= cons (tl arg) (tl DSt); CSt:= tl CSt
+     case @doCons:  arg2:= hd tl DSt; DSt := cons (cons arg arg2) (tl tl DSt); CSt:= tl CSt
+     case @doAsgn:  X := hd tl CSt;  St:= <update>[X,arg,St]; DSt:= tl DSt; CSt:= tl tl CSt
+     case @doWhile: if arg { wc:= hd tl CSt;
+     	  	       	     CSt:= tl CSt;
+                             B:= hd tl tl wc; // block to be added to current commands
+			     // add the commands of B in right order onto tl Stack;
+			     B := <reverse> B; // reverse to get the right order
+			     while B
+			     { CSt:= cons (hd B) CSt;
+			       B:= tl B
+			     }
+                    } else 
+                      {  
+                         CSt := tl tl CSt   
+		      } ; 
+		    DSt := tl DSt
+			
+     case @doIf:   ifc:= hd tl CSt;
+     	  	   if arg {
+                        B:= hd tl tl ifc // then block to be added to current commands
+                     } else {
+		      B:= hd tl tl tl ifc // else block to be added to current commands
+		    };
+		    CSt:= tl tl CSt;
+		      // add the commands of B in right order onto tl Stack;
+			  B := <reverse> B; // reverse to get the right order
+			  while B
+			     { CSt := cons (hd B) CSt;
+			       B := tl B
+			     };
+		    DSt := tl DSt
+			
+	 case @while: Cst := tl Cst; 
+				 Cst := cons P Cst;
+				 Cst := cons arg Cst;
+				 Dst := tl Dst
+			
+    case 44: // [do funapp i E F]   F on value stack now
+                funapp:= hd tl CSt;
+                CSt:= tl tl CSt; // popping stuff form Cst remembering original funapp
+                xvar:= hd tl funapp;
+                E := hd tl tl funapp;
+                CSt:= cons E cons 45  cons St CSt;
+                St:= <update>[xvar,arg,St];
+                DSt:= tl DSt
+   case 45: // [do funapp i E F]   E on value stack now, need to restate original Store
+                St := hd tl CSt;
+                CSt:= tl tl CSt // popping stuff form Cst remembering original funapp
+          }     // end switch
+    } // end if do_smth case
+   else
+    {   // top level command executed that is of shape [op,arg1,…]
+     cur_op := hd C; // type of current command
+   	 arg := hd tl C;
+  	 arg2 := hd tl tl C; 
+   	 switch cur_op {
+    		case @quote: DSt:= cons arg DSt; CSt:= tl CSt
+     		case @var: V := <lookup> [arg, St];  DSt := cons V DSt; CSt:= tl CSt
+     		case @hd: CSt:= cons arg cons @doHd (tl CSt)
+     		case @tl: CSt:= cons arg cons @doTl (tl CSt)
+ 		    case @cons:  CSt := cons arg2 cons arg cons @doCons (tl CSt)                 
+ 		    case @:=: CSt := cons arg2 cons @doAsgn cons arg (tl CSt)                   
+            case @while: CSt:= cons arg cons @doWhile CSt
+		    case @if:  CSt:= cons arg cons @doIf CSt     
+		    case 4:  CSt:= cons (hd tl tl tl C) cons 44 CSt   // funapp X E F compute F first
+		    } // end switch
+  }; // end else
+   newState :=  [ CSt, DSt, St ]
+}
+write newState

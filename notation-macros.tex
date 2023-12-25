@@ -1,0 +1,100 @@
+\documentclass[11pt]{article}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{stmaryrd}
+ 
+%natural numbers and data-value abbreviations
+\newcommand{\Nn}{\mathbb{N}}
+\newcommand{\Data}{\mathbb{D}}
+
+%language macros
+
+\newcommand{\While}{\texttt{WHILE}}
+\newcommand{\WI}{\texttt{WH\textsuperscript{1}LE}}
+
+%function space
+\newcommand{\funspace}[2]{ {#1} \rightarrow {#2} }   
+
+%undefined
+\newcommand{\undef}{\perp}
+
+% D with undefined
+\newcommand{\Dundef}{\Data_{\undef}}
+
+
+% tree constructors
+\newcommand{\nil}{\mathrm{nil}}
+\newcommand{\pair}[2]{\langle\, {#1}.{#2}\, \rangle }   
+ 
+  %store update
+ \newcommand{\storeupdate}[3]{%
+{#1}[\mathtt{#2}:={#3}]}
+
+ 
+%semantic brackets
+\newcommand{\sem}[1]{%
+  \left\llbracket #1
+  \right\rrbracket}   
+  
+%semantic function for expressions
+\newcommand{\expsem}[2]{%
+{\cal E}{\left\llbracket #1 \right\rrbracket}  \, {#2}
+}
+  
+ 
+%judgement: semantics of commands
+\newcommand{\opsem}[3]{%
+\mathtt{#1} \vdash {#2} \rightarrow {#3}}
+
+ %encoding brackets    
+ \newcommand{\encode}[1]{\ulcorner {#1} \urcorner}
+\newcommand{\ket}[1]{%
+{#1}\rangle}
+
+ % minus operation on integers
+ \newcommand{\myminus}{\ensuremath{\dot{\texttt{-}}}}
+
+% reduction
+ \newcommand{\reduce}{\ensuremath{\leq_{\mathrm{rec}}}}
+ 
+ 
+ 
+
+\begin{document}
+
+\large
+
+$\Nn$
+
+$\Data$
+
+$\undef$
+
+\While
+
+\WI
+
+$\funspace{\Data}{\Dundef}$
+
+ 
+$\pair{\nil}{\nil}$
+
+$\storeupdate{\sigma}{X}{e}$
+
+
+$\sem{p}^\While$
+
+$\expsem{\mathtt{hd}\ \mathtt{nil}}{\sigma}$
+
+$\opsem{S}{\sigma_1}{\sigma_2}$
+ 
+  
+ $\encode{[\, 1, 2\, ]}$
+
+$3\ \myminus\ 4$
+
+$A\ \reduce\ B$
+\end{document}
+
+   

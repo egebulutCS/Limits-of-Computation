@@ -1,0 +1,24 @@
+(* isnumber.while
+
+ This program takes as input any tree T
+ and returns true if the input encodes
+ a number using the nil^i encoding via
+ lists of nil's. Otherwise it returns false.
+ This is an auxiliary function for a While parser.
+
+ (C) 2009-16 Bernhard Reus 
+*)
+
+
+isnumber read T {
+	Ok := true;  // true is syntax sugar for <nil.nil>
+	while T {
+		if hd T {
+			Ok := false; // false is syntax sugar for nil
+			T:= nil	   // jump out of loop
+                        };
+		T := tl T
+       }
+		           
+}			   
+write Ok

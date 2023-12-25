@@ -1,0 +1,21 @@
+(* 
+	Candidate no: 181509
+*)
+
+intF1 read PD {
+	 
+ P := hd PD;              // P = [X,B,Y] 
+ D := hd tl PD;           // D is input value) 
+ B := hd tl P;            // B is program code block
+ CSt := B;                // Cst is code stack, initialised with the program
+ DSt := nil;              // DSt is data stack for intermediate results
+
+ val := D;		  // D is initial value of our one variable
+ state := [ CSt, DSt, val, P ];   // wrap state for STEP macro 
+ while CSt { 
+    state := <STEPf1> state;     // execute the STEP macro while there is code to execute 
+    CSt := hd state
+  };
+ val := hd tl tl state         // get  final value of variable
+}  
+write val

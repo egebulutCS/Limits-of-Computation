@@ -1,0 +1,36 @@
+(* u1.while
+
+  The universal program for WH1LE (i.e. a WH1LE interpreter in WHILE)
+  Recall that WH1LE is WHILE but only one variable can be used.
+
+  This program takes as input a list [p,d]  where
+
+    p is a WH1LE-program (and thus also a WHILE-program) encoded as list
+    d is a value in WH1LE-data = WHILE-data  
+
+    and interprets the program p with input d 
+    so the output is [|p|](d)
+
+   It is intentional that the STEP macro is not provided on StyDir (yet).
+
+   (c) 2008-16 Bernhard Reus 
+
+*)
+
+u1 read PD {
+	 
+ P := hd PD;              // P = [X,B,Y] 
+ D := hd tl PD;           // D is input value) 
+ B := hd tl P;            // B is program code block
+ CSt := B;                // Cst is code stack, initialised with the program
+ DSt := nil;              // DSt is data stack for intermediate results
+
+ val := D;		  // D is initial value of our one variable
+ state := [ CSt, DSt, val ];   // wrap state for STEP macro 
+ while CSt { 
+    state := <STEP> state;     // execute the STEP macro while there is code to execute 
+    CSt := hd state
+  };
+ val := hd tl tl state         // get  final value of variable
+}  
+write val

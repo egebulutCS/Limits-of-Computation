@@ -1,0 +1,20 @@
+(* add.while
+
+  Add two numbers given as list [n,m] where n and m
+  are encoded as usual as nil^i by
+  pushing the nils from X onto Y
+  as seen in Lecture 3.
+
+   (c) 2008-16 Bernhard Reus 
+
+*)
+
+add read XY {
+	X := hd XY;
+	Y := hd tl XY;
+	while X {
+	   Y:= cons nil Y;
+	   X:= tl X
+        }
+}
+write Y
